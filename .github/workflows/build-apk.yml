@@ -1,3 +1,4 @@
+
 name: Build DIEU TUAN TikXu APK
 
 on:
@@ -15,7 +16,7 @@ jobs:
 
       - name: Extract source
         run: |
-          unzip -q Dieu_Tuan_TikXu_Android_Source.zip
+          unzip -q Dieu_Tuan_TikXu_Portrait_v2_Source.zip
           test -f TikXuAssist/app/build.gradle
 
       - name: Setup Java
@@ -45,6 +46,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: DIEU-TUAN-TikXu-APK
+          name: DIEU-TUAN-TikXu-v2-APK
           path: TikXuAssist/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
