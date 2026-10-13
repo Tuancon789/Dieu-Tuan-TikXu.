@@ -16,9 +16,30 @@ jobs:
 
       - name: Extract source v3.2
         run: |
-          test -f Dieu_Tuan_TikXu_v3_2_Source.zip
           unzip -q Dieu_Tuan_TikXu_v3_2_Source.zip
           test -f TikXuAssist/app/build.gradle
+
+      - name: Fix Java duplicate variable
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("TikXuAssist/app/src/main/java/com/example/tikxu/MainActivity.java")
+          s = p.read_text(encoding="utf-8")
+
+          replacements = [
+              ("Button notice = action(", "Button noticeBtn = action("),
+              ("root.addView(notice, buttonParams());", "root.addView(noticeBtn, buttonParams());"),
+              ("notice.setOnClickListener", "noticeBtn.setOnClickListener")
+          ]
+
+          for old, new in replacements:
+              if s.count(old) != 1:
+                  raise SystemExit("Unexpected Java source")
+              s = s.replace(old, new, 1)
+
+          p.write_text(s, encoding="utf-8")
+          PY
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -50,3 +71,4 @@ jobs:
           name: DIEU-TUAN-TikXu-v3.2-APK
           path: TikXuAssist/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+          
