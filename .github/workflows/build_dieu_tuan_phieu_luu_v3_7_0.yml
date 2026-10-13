@@ -21,7 +21,7 @@ jobs:
         run: |
           set -euo pipefail
           cat > /tmp/dieu_tuan_game.b64 <<'OFFLINE_GAME_ASSETS'
-          UEsDBBQAAAAIAJyNTV2HFQ/4si4AAKJ6AAAWAAAAYXNzZXRzL2dhbWUvaW5kZXguaHRtbKV9aXMj
+          UEsDBBQAAAAIAFqOTV2HFQ/4si4AAKJ6AAAWAAAAYXNzZXRzL2dhbWUvaW5kZXguaHRtbKV9aXMj
           x5Xg9/4VJba6C0UWinUfAEGN1JLVWrfaCony2NHuCNeRBZQaQEGFAgkYQoTX3rBjZ8cey56JGN+W
           fI089ti7npjdaW7sfKBW/4P9B9Y/Yd/LzDoBslu2FE1W5fHy5bvfywR49FyUhvlqRoRRPhkf3zjC
           X8LYnw4He6fJHjYQP4JfE5L7QjjysznJB3tvn3ym6+4dHrPmqT8hOJyczdIs3xPCdJqTKQw7S6J8
@@ -231,7 +231,7 @@ jobs:
           jtpsrdL8lHvjjQpIv6YZ/SrPqYGYIYTyKIUhUa/8sqNKduqyrykeYlXZZ1CmGaZGM2UF/zL+j968
           lTZtUPUb7/ES1+UnKdur1k5A42Wxtivt4lgcONscc67hWMxkQQbc4RGQh5+rXdiW17yLA7kWrxna
           LXRCCBO5CF0lcRWe+Ocnmt/U28JVZN+S+NX7d4WTNy/+Fn69dfn4fwsnr10+/j9vCCeX57+4oygK
-          fl+iKNsmsEZT6VlU+yNWGwmzs6PD4ssOjg75V0Qesr9I/f8BUEsDBBQAAAAIAJyNTV2Y1a3zUvAB
+          fl+iKNsmsEZT6VlU+yNWGwmzs6PD4ssOjg75V0Qesr9I/f8BUEsDBBQAAAAIAFqOTV2Y1a3zUvAB
           ACrwAQAmAAAAYXNzZXRzL2dhbWUvYXNzZXRzL3J1bmctdGluaC1saW5oLndlYnAABUD6v1JJRkYi
           8AEAV0VCUFZQOCAW8AEAMGUMnQEqQAaEAz6dQptIrCcmKi1UTMGAE4lNr7+L08M269grChSASGKC
           nCnOFDd87DzTPLi5t/Zu+P+Q8GjrT0yn9b3WVAnmptHFIX/l8pXQCoP6XBuuf7zzEuQ/NP9v1i/J
@@ -2462,7 +2462,7 @@ jobs:
           FOqFNv+/2FdZBtl/AyFsUxHe5w9YUp3ZBckSgD30yteyQl90gN0hFsG4xIDSYSwaOBIhzhRM9Dbe
           TK5VGpKWeplGUtqDWDOHl4RNDiFMHVDgsDczXlt926bxE+QGLvADfv2QOjtPMUZZQ0aDgI9lykvr
           7Z0B/JeN24ay1jpeL+Iw/3rKH86Mtpv8KbthEiwFjDIXiWCK+0YjfENA50bE4VZiOw4AAFBLAwQU
-          AAAACACcjU1dvYRlYP+ZAADwmQAAIAAAAGFzc2V0cy9nYW1lL2Fzc2V0cy9oZXJvLW5hbS53ZWJw
+          AAAACABbjk1dvYRlYP+ZAADwmQAAIAAAAGFzc2V0cy9nYW1lL2Fzc2V0cy9oZXJvLW5hbS53ZWJw
           AAdA+L9SSUZG6JkAAFdFQlBWUDgg3JkAABD5Ap0BKqQB2gI+nUCbSSWjoiErkz3YsBOJTSeSD1+i
           t+Twk5CmANkcDjpLeBtA3inYV9AB3BBJ+YV3Nndw521N/aX9l3HY+XVyX5KcIfvz/lfMF/k7+Pev
           /L58ntXey/8/sF/pHoo9L3nMvNK9Enq5fSUsGWVa2L2r/mfnH8Dn7xmb9i/0fNL+f/pf+7/k/VHw
@@ -3154,7 +3154,7 @@ jobs:
           bQszQQXteUg8FslDbYesUQPPGaP4mVkN8OyjUNBmP+xgit/VVTwQvdt7A0CINM/1S3BS5cZm4Rvm
           F7lep1L9+4avjYado/+x8/nBoyfIrJFGuXwnTCJjnfdmS73mvve3mCWddB2B9BOuhq4w/a8uJnQR
           WZxiEr3AGakSo+0qz/95MxC2vPPQpuojXzoNnAtj4d7s2iNA8X0aK4kMNkelagI2vNNTX+RV3ke9
-          sdi2x90LH5sLFESfdbICYGmQGq3FB+BBcMdp6tFbygB6wAAAUEsDBBQAAAAIAJyNTV12E27bA6YA
+          sdi2x90LH5sLFESfdbICYGmQGq3FB+BBcMdp6tFbygB6wAAAUEsDBBQAAAAIAFuOTV12E27bA6YA
           APSlAAAfAAAAYXNzZXRzL2dhbWUvYXNzZXRzL2hlcm8tbnUud2VicAAJQPa/UklGRuylAABXRUJQ
           VlA4IOClAAAQEAOdASqkAdoCPp1CmkilpCWhLJM92LATiWJrbErNO7i+nWGPw93b5E2s7Fcm7VEQ
           oREhNcv8z3DWUNX4FO48gH11aCkfub60exKPvkPwB+qfjvVq/x+AXt3/j86h7D/yeu79lew/0MvO
@@ -3901,7 +3901,7 @@ jobs:
           BCzRRbHfQuyHg1wiRofiNoNUZ3qq3VD+xAMJ9RupwW2m9MZZ4v3zIRx3I7G3BA+Depxlm5fg3hpa
           f4UPQONTyyc+A9oPZphZXICXnQgx44lvQAXamqyW6ndOhoFu1BZPpBoRVkFQqGlDQwGwqsa8FnCb
           uCTorbkm+dCiMafM6KPVbuLWFpkY56jpwdBTKHJIgFvEi+vJ0wZz6Jzzj9HQE3vVnADU5T2MLUQC
-          pwwUB2WOgvarEQDXKtPygABQSwMEFAAAAAgAnY1NXW1ahmprOAAAZjgAACEAAABhc3NldHMvZ2Ft
+          pwwUB2WOgvarEQDXKtPygABQSwMEFAAAAAgAW45NXW1ahmprOAAAZjgAACEAAABhc3NldHMvZ2Ft
           ZS9hc3NldHMvaGVyby1nYW1lLndlYnABZjiZx1JJRkZeOAAAV0VCUFZQOFgKAAAAEAAAAHcBACUB
           AEFMUEiODwAAATfFoG0kR+/cfeXPuFKIiFz8hPJunPJISiFDoZLX2BqjS9RGnjMpRe6U5B4NA/JI
           KT8MB20jSVLMH/Y81ztHICImoEGfNlRj01VPvd3xmce7fM2L3UKTdFG5bFj/a78zfgE9jJ5kgR5J
@@ -4155,7 +4155,7 @@ jobs:
           BFs56yIY+b0xNNSnbkvg5j1iYF/ndR08uZoaCUFpOCqV9HpjU5QZeFRjnxoA13ahQjXuPJThqPIa
           ncZxRR7jUZcx4+UK8QGyd17nlUVobz2zDiDqIx0k1s6QHw3wssdO/zBZfO2JS97OjbbLuRK5AdWY
           iYOerWYhkxTRYwMBJLaPwEwLGelnNRK3mTyTmaIqxKrexo8VItqCpnVdlHlsbXSi4D1yYYJtFN4A
-          0VKPT2S9IXtbvvJZtrsEXDmVAiJLV95PONmi85hhE+UaN6r6g9QT5IrgQAAAUEsDBBQAAAAIAJ2N
+          0VKPT2S9IXtbvvJZtrsEXDmVAiJLV95PONmi85hhE+UaN6r6g9QT5IrgQAAAUEsDBBQAAAAIAFuO
           TV1klnCtkAkAAIsJAAAfAAAAcmVzL21pcG1hcC1tZHBpL2ljX2xhdW5jaGVyLnBuZwGLCXT2iVBO
           Rw0KGgoAAAANSUhEUgAAADAAAAAwCAMAAABg3Am1AAABgFBMVEX/35z/3Yz/3Iv/3Ir/2or/2ob8
           24z82Irw2qbyz4/VyrvAx+jGxcbDucjJvJbAsbu/rI6kz9yjwNisu9KVu9KutMees9aMs9p+sdqq
@@ -4199,8 +4199,8 @@ jobs:
           Ug5cQU0Wk8Xdaxmu2jtIYjq0ODMAwGE4Nkzmaml3OxeBhaI0AIJBZ1LKkdodLdz9MsxV3e2vtMmU
           SMLmRGenw/HqsFZNFyg6ouNLzOnxBHI4ku5xgi+SGAywL2u320v9ScmnkCvlpUnV4MN8vojP5zNI
           RHxp1WxpDyCzJd1pzzomEV8oFAiAcb4FvoVgEnAEwh/xBRJLvBbU/W1DiU463e5Mxn8tkiPQeam0
-          M5VKpbqrqyvTNA2W0u/zkOp0aCxWoyzV/r+mHjRSlOLwfAAAAABJRU5ErkJgglBLAwQUAAAACACd
-          jU1de9hMCEcSAABCEgAAHwAAAHJlcy9taXBtYXAtaGRwaS9pY19sYXVuY2hlci5wbmcBQhK97YlQ
+          M5VKpbqrqyvTNA2W0u/zkOp0aCxWoyzV/r+mHjRSlOLwfAAAAABJRU5ErkJgglBLAwQUAAAACABb
+          jk1de9hMCEcSAABCEgAAHwAAAHJlcy9taXBtYXAtaGRwaS9pY19sYXVuY2hlci5wbmcBQhK97YlQ
           TkcNChoKAAAADUlIRFIAAABIAAAASAgDAAAAYjNDdQAAAYBQTFRF//Ki/+WI/+CE/96D/9mI/9qD
           +9qW1NvV2MzH4MmV7cyK4MWIw8jqxcW7pMvXoMPZ0bm50LiGuLXeuLSqo7ronrHkpbS+o628tqew
           pqa8pp62pZStl6TJmKGlmJPDl4+OhcDXg7TVja3jeq7SiKfmi6bIf6bebqbMhZ/Zfp7dhZy/iZyv
@@ -4283,7 +4283,7 @@ jobs:
           I2GKTNovzJTBj3i8vf19AfczmGAn7v3fh7uH4D/XBXwe7xCPEJkMSajS/QxioiicotoMw4zbD/jR
           4TfQ4U4wPv85+XYkFnOfHR79PT+Cc8klQRDlcsqFQ0eEAINigDQaQWW2Hi6Vyu9KpfISV1Lr9UTp
           wnGCUJnghulqiV/iuBJXKiXcP1xeEv/8Ewo9lMv0A4Ba/wuqJuoDrF2hwgAAAABJRU5ErkJgglBL
-          AwQUAAAACACdjU1d0haaFlsdAABWHQAAIAAAAHJlcy9taXBtYXAteGhkcGkvaWNfbGF1bmNoZXIu
+          AwQUAAAACABbjk1d0haaFlsdAABWHQAAIAAAAHJlcy9taXBtYXAteGhkcGkvaWNfbGF1bmNoZXIu
           cG5nAVYdqeKJUE5HDQoaCgAAAA1JSERSAAAAYAAAAGAIAwAAANVGhwoAAAGAUExURf/uov/kjf/h
           i//hhvLo1f/eif/ehv/YhuzZu/nSiPfOgeDPvcvN4d3EosTE28S3xcu0jrDS2K/B3prF2HvF5623
           5LC1vJS233W21bCt2pet3bOtqqGssYis7Yus1HqtzWis16ijyKyjl7KWqZ+Xr5Wixpefo5WSuZaR
@@ -4416,7 +4416,7 @@ jobs:
           /6J4qYYJu0oOgDDDiPZhsB2r1VAU6eZ7UyPnne6Et5NT9AE5vIALch5PLP/3pX9/ZC9QPBrFTp7j
           jVwm7NV4YYPEIFs0TcJPHH716VatFo+//CUWiwXcv7jcv+Qa+V8w3bdeMek3aUxGg9FgsJuMTZho
           JOhDRQmf5aKPi//6CxLs2fTy8hLOZbIZv1cF2R7/L3Zy4Du/wl0mAAAAAElFTkSuQmCCUEsDBBQA
-          AAAIAJ2NTV0T/FW3kDoAAIs6AAAhAAAAcmVzL21pcG1hcC14eGhkcGkvaWNfbGF1bmNoZXIucG5n
+          AAAIAFuOTV0T/FW3kDoAAIs6AAAhAAAAcmVzL21pcG1hcC14eGhkcGkvaWNfbGF1bmNoZXIucG5n
           AYs6dMWJUE5HDQoaCgAAAA1JSERSAAAAkAAAAJAIAwAAANCYEooAAAGAUExURf/qo//jjP/giP/c
           iv/dhfzdl+Dj5PjYlPvYi/zXiOzOoPzUhdLP5tbKvMTJ4q7J6cm7y8+7j7m44rq1sqW86KGy5ay2
           vaevt7iosqenuLSdp6Sbt5qmypujppuUxJqUkmrZ+mPN84u24Vu+54yr6I6oxYOo43ao5Iah04Wc
@@ -4680,7 +4680,7 @@ jobs:
           h9/bjXBDO2mPNZYWZq/p8NePdfX8cnp4wQ/uxdzSWH+5XAzjwk8af/TmJkyA4jkAaZA76+iHrBwC
           w3S7YAiXqtwqFTkcxrLAEUvXuSxD3nNlvTvujaYjq5Qck0CTc191OjQEah2pCq7qYPA27c6bFw7k
           h5S7thtJVOTKf1Ip3nBdjee6yOVXQomA3x9PWMh5kcXKU8X6/wHb6bBZQ+zKNQAAAABJRU5ErkJg
-          glBLAwQUAAAACACdjU1dgJKjMDNhAAA9YQAAIgAAAHJlcy9taXBtYXAteHh4aGRwaS9pY19sYXVu
+          glBLAwQUAAAACABbjk1dgJKjMDNhAAA9YQAAIgAAAHJlcy9taXBtYXAteHh4aGRwaS9pY19sYXVu
           Y2hlci5wbmcUl1VYlA0Tht/dBZZekO4FEZDubhBpKSkREJCW7ly6S0BauqW7u6VBuluku//vP5iZ
           kzmb57rue8JUlN9joZOiAwCAJScrrfbf7Px/oUL+61/B6TwAAEKoKGq8eznIedmMflkLfVmOeFkM
           f1kOedz49bQYsbH993Eh8nEh/Gkh9Hombn5qa3O0ZHh0u35073f72HRrclvbXntDU3HH35y6/bLG
@@ -5117,20 +5117,20 @@ jobs:
           EvCgM2yV8aDdHUOttU4OJuSDIcitN5C0g5vE3Yw7UOsNevA2Dj5iJiz5uI11RLL2K3HDZ2MPUTb4
           Tgr4/A1p4QipLqHIp1zMhgsBAILMgofhZ30ggLYgRLOVCCigViFj1mwG+5+5wcnB2YejCpZWhPyC
           DPJtS0INN+7haeUDRrKm8WABwhegyBsNPB9CHnLDdXu4arqyoZmtpkQAG2uzj+VF/w0F6lmDHeDC
-          doPlTgAUkEobGNeGZp0AYDT/CzvbWz0H7se9AAAAAElFTkSuQmCCUEsBAhQDFAAAAAgAnI1NXYcV
+          doPlTgAUkEobGNeGZp0AYDT/CzvbWz0H7se9AAAAAElFTkSuQmCCUEsBAhQDFAAAAAgAWo5NXYcV
           D/iyLgAAonoAABYAAAAAAAAAAAAAAIABAAAAAGFzc2V0cy9nYW1lL2luZGV4Lmh0bWxQSwECFAMU
-          AAAACACcjU1dmNWt81LwAQAq8AEAJgAAAAAAAAAAAAAAgAHmLgAAYXNzZXRzL2dhbWUvYXNzZXRz
-          L3J1bmctdGluaC1saW5oLndlYnBQSwECFAMUAAAACACcjU1dvYRlYP+ZAADwmQAAIAAAAAAAAAAA
-          AAAAgAF8HwIAYXNzZXRzL2dhbWUvYXNzZXRzL2hlcm8tbmFtLndlYnBQSwECFAMUAAAACACcjU1d
+          AAAACABajk1dmNWt81LwAQAq8AEAJgAAAAAAAAAAAAAAgAHmLgAAYXNzZXRzL2dhbWUvYXNzZXRz
+          L3J1bmctdGluaC1saW5oLndlYnBQSwECFAMUAAAACABbjk1dvYRlYP+ZAADwmQAAIAAAAAAAAAAA
+          AAAAgAF8HwIAYXNzZXRzL2dhbWUvYXNzZXRzL2hlcm8tbmFtLndlYnBQSwECFAMUAAAACABbjk1d
           dhNu2wOmAAD0pQAAHwAAAAAAAAAAAAAAgAG5uQIAYXNzZXRzL2dhbWUvYXNzZXRzL2hlcm8tbnUu
-          d2VicFBLAQIUAxQAAAAIAJ2NTV1tWoZqazgAAGY4AAAhAAAAAAAAAAAAAACAAflfAwBhc3NldHMv
-          Z2FtZS9hc3NldHMvaGVyby1nYW1lLndlYnBQSwECFAMUAAAACACdjU1dZJZwrZAJAACLCQAAHwAA
+          d2VicFBLAQIUAxQAAAAIAFuOTV1tWoZqazgAAGY4AAAhAAAAAAAAAAAAAACAAflfAwBhc3NldHMv
+          Z2FtZS9hc3NldHMvaGVyby1nYW1lLndlYnBQSwECFAMUAAAACABbjk1dZJZwrZAJAACLCQAAHwAA
           AAAAAAAAAAAAgAGjmAMAcmVzL21pcG1hcC1tZHBpL2ljX2xhdW5jaGVyLnBuZ1BLAQIUAxQAAAAI
-          AJ2NTV172EwIRxIAAEISAAAfAAAAAAAAAAAAAACAAXCiAwByZXMvbWlwbWFwLWhkcGkvaWNfbGF1
-          bmNoZXIucG5nUEsBAhQDFAAAAAgAnY1NXdIWmhZbHQAAVh0AACAAAAAAAAAAAAAAAIAB9LQDAHJl
-          cy9taXBtYXAteGhkcGkvaWNfbGF1bmNoZXIucG5nUEsBAhQDFAAAAAgAnY1NXRP8VbeQOgAAizoA
+          AFuOTV172EwIRxIAAEISAAAfAAAAAAAAAAAAAACAAXCiAwByZXMvbWlwbWFwLWhkcGkvaWNfbGF1
+          bmNoZXIucG5nUEsBAhQDFAAAAAgAW45NXdIWmhZbHQAAVh0AACAAAAAAAAAAAAAAAIAB9LQDAHJl
+          cy9taXBtYXAteGhkcGkvaWNfbGF1bmNoZXIucG5nUEsBAhQDFAAAAAgAW45NXRP8VbeQOgAAizoA
           ACEAAAAAAAAAAAAAAIABjdIDAHJlcy9taXBtYXAteHhoZHBpL2ljX2xhdW5jaGVyLnBuZ1BLAQIU
-          AxQAAAAIAJ2NTV2AkqMwM2EAAD1hAAAiAAAAAAAAAAAAAACAAVwNBAByZXMvbWlwbWFwLXh4eGhk
+          AxQAAAAIAFuOTV2AkqMwM2EAAD1hAAAiAAAAAAAAAAAAAACAAVwNBAByZXMvbWlwbWFwLXh4eGhk
           cGkvaWNfbGF1bmNoZXIucG5nUEsFBgAAAAAKAAoACQMAAM9uBAAAAA==
           OFFLINE_GAME_ASSETS
           base64 -d /tmp/dieu_tuan_game.b64 > /tmp/dieu_tuan_game.zip
@@ -5162,7 +5162,7 @@ jobs:
           for p in (MAIN, AUTH, ADMIN, MANIFEST, GRADLE, STRINGS, GAME):
               if not p.is_file():
                   raise SystemExit('Missing original file or game asset: ' + str(p))
-          original_hash = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in (AUTH, ADMIN)}
+          original_hash = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in (AUTH,)}
 
           src = MAIN.read_text(encoding='utf-8')
           old_login_success = 'runOnUiThread(() -> {unlocked=true; showDashboard();});'
@@ -5247,6 +5247,27 @@ jobs:
           assert 'AuthApi.saveLogin(this,result);' in src
           assert 'LiveHuntV34' not in src and 'TapAccessibilityService' not in src
           MAIN.write_text(src, encoding='utf-8')
+
+          # Preserve administrator account management, but remove the obsolete hunting UI
+          # and the reference to the TikXu accessibility service which the game no longer ships.
+          admin = ADMIN.read_text(encoding='utf-8')
+          admin = admin.replace('♛   ĐIỂU TUẤN • TikXu', '♛   ĐIỂU TUẤN PHIÊU LƯU')
+          start_tools = '        LinearLayout tools=panel("⚙  QUẢN TRỊ ỨNG DỤNG");'
+          start_notices = '        LinearLayout notifications=panel("✉  THÔNG BÁO ADMIN");'
+          if admin.count(start_tools) != 1 or admin.count(start_notices) != 1:
+              raise SystemExit('Unexpected ADMIN tools section. Refusing to patch blindly.')
+          admin = admin[:admin.index(start_tools)] + admin[admin.index(start_notices):]
+          old_emergency = 'if(next)TapAccessibilityService.stop();'
+          if admin.count(old_emergency) != 1:
+              raise SystemExit('Unexpected ADMIN emergency control. Refusing to patch blindly.')
+          admin = admin.replace(old_emergency, '// All game sessions re-check emergency_stop with the backend.', 1)
+          admin = admin.replace('Đã yêu cầu dừng các thiết bị khi kiểm tra phiên',
+                                'Đã tạm dừng quyền mở game trên máy chủ')
+          # All account/ADMIN endpoints must stay intact.
+          for route in ('/v1/admin/users', '/v1/admin/notice', '/v1/admin/emergency', '/v1/me'):
+              assert route in admin, 'Admin management endpoint lost: ' + route
+          assert 'TapAccessibilityService' not in admin
+          ADMIN.write_text(admin, encoding='utf-8')
 
           # Old hunting engine and accessibility service are not part of the game.
           for name in ('LiveHuntV34.java', 'VisionReader.java', 'TapAccessibilityService.java'):
@@ -5371,7 +5392,7 @@ jobs:
           for p in PKG.glob('*.java'):
               s = p.read_text(encoding='utf-8')
               assert not any(x in s for x in ('LiveHuntV34', 'VisionReader', 'TapAccessibilityService')), 'Old TikXu dependency: ' + str(p)
-          print('Game source patched: account login, expiry, server and ADMIN retained. Game WebView assets embedded.')
+          print('Game source patched: account login, expiry, ADMIN user management preserved; obsolete TikXu controller removed.')
 
           PATCH_GAME
           python3 /tmp/dieu_tuan_patch.py
