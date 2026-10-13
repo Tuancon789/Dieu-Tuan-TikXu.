@@ -1,0 +1,545 @@
+name: Build DIEU TUAN Auto Click v3.6.5 APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout existing TikXu project
+        uses: actions/checkout@v4
+      - name: Extract ORIGINAL v3.6.4 source, without modifying it
+        run: |
+          set -euo pipefail
+          unzip -q Dieu_Tuan_TikXu_v3_6_4_Source.zip
+          test -f TikXuAssist/app/src/main/java/com/example/tikxu/MainActivity.java
+          test -f TikXuAssist/app/src/main/java/com/example/tikxu/AuthApi.java
+          test -f TikXuAssist/app/src/main/java/com/example/tikxu/AdminActivity.java
+      - name: Patch v3.6.5 Auto Click (self-contained; preserves login)
+        run: |
+          set -euo pipefail
+          cat > /tmp/patch_v365.py <<'PY'
+          #!/usr/bin/env python3
+          """Patch the EXISTING v3.6.4 TikXuAssist source into v3.6.5 Auto Click.
+          Preserves app package, server AuthApi, ADMIN and login logic.
+          Requires TikXuAssist to have been extracted from the user's v3.6.4 ZIP.
+          """
+          from pathlib import Path
+          import hashlib
+          import xml.etree.ElementTree as ET
+          
+          ROOT = Path('TikXuAssist')
+          PKG = ROOT / 'app/src/main/java/com/example/tikxu'
+          MAIN = PKG / 'MainActivity.java'
+          AUTH = PKG / 'AuthApi.java'
+          ADMIN = PKG / 'AdminActivity.java'
+          MANIFEST = ROOT / 'app/src/main/AndroidManifest.xml'
+          GRADLE = ROOT / 'app/build.gradle'
+          STRINGS = ROOT / 'app/src/main/res/values/strings.xml'
+          for file in (MAIN, AUTH, ADMIN, MANIFEST, GRADLE, STRINGS):
+              if not file.is_file():
+                  raise SystemExit(f'Missing v3.6.4 file: {file}')
+          checksums = {p: hashlib.sha256(p.read_bytes()).hexdigest() for p in (AUTH, ADMIN)}
+          
+          src = MAIN.read_text(encoding='utf-8')
+          login_open = '    private void showLogin() {'
+          login_close = '    private EditText entry('
+          assert src.count(login_open) == 1 and src.count(login_close) == 1
+          old_login = src[src.index(login_open):src.index(login_close)]
+          for required in (
+              'AuthApi.request(this,"POST","/v1/login",payload,false)',
+              'AuthApi.saveLogin(this,result);',
+              'putString("notice",result.optString("notice",""))',
+          ):
+              assert required in old_login, f'Original server login missing: {required}'
+          
+          # Once server login succeeds, automatically open TikTok INSIDE this app.
+          original_success = 'runOnUiThread(() -> {unlocked=true; showDashboard();});'
+          assert src.count(original_success) == 1
+          src = src.replace(original_success,
+                            'runOnUiThread(() -> {unlocked=true; showDashboard(); openTikTokInside();});', 1)
+          # Remove chest/coins/scheduled tap modes from dashboard; retain login and ADMIN.
+          start = src.index('    private void showDashboard() {')
+          end = src.index('    private void startMode(', start)
+          new_dashboard = '''    private void showDashboard() {
+                  LinearLayout root = page();
+                  root.addView(label("ĐIỂU TUẤN • AUTO CLICK v3.6.5", 24, CYAN, true));
+                  space(root, 12);
+                  root.addView(label("Đã đăng nhập: " + AuthApi.username(this) +
+                          (AuthApi.isAdmin(this) ? " • ADMIN" : " • TÀI KHOẢN CÓ HẠN"),
+                          14, 0xff6bf0c4, true));
+                  if (!AuthApi.isAdmin(this)) {
+                      long expires = getSharedPreferences("tikxu_auth", MODE_PRIVATE).getLong("expires_at", 0);
+                      if (expires > 0) {
+                          SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.forLanguageTag("vi-VN"));
+                          f.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
+                          root.addView(label("Hết hạn: " + f.format(new Date(expires)), 13, 0xffffd48d, false));
+                      }
+                  } else {
+                      space(root, 8);
+                      Button admin = action("QUẢN LÝ ADMIN / TÀI KHOẢN", false);
+                      root.addView(admin, buttonParams());
+                      admin.setOnClickListener(v -> startActivity(new Intent(this, AdminActivity.class)));
+                  }
+                  String notice = getSharedPreferences("tikxu_auth", MODE_PRIVATE).getString("notice", "");
+                  if (!notice.isEmpty()) root.addView(label("THÔNG BÁO ADMIN: " + notice, 13, 0xffffd18e, false));
+                  space(root, 12);
+                  Button web = action("MỞ TIKTOK TRONG APP", true);
+                  root.addView(web, buttonParams());
+                  web.setOnClickListener(v -> openTikTokInside());
+                  root.addView(label("TikTok hiển thị qua WebView; một số mục LIVE/tin nhắn có thể bị hạn chế.",
+                          12, 0xffc0d6ef, false));
+                  space(root, 12);
+                  Button access = action("BẬT TRỢ NĂNG CHO TAP TAY", false);
+                  root.addView(access, buttonParams());
+                  access.setOnClickListener(v -> startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)));
+                  status = label("", 13, Color.WHITE, false);
+                  root.addView(status);
+                  space(root, 12);
+                  Button lock = action("ĐĂNG XUẤT", false);
+                  root.addView(lock, buttonParams());
+                  lock.setOnClickListener(v -> {
+                      TapAccessibilityService.stop();
+                      new Thread(() -> {
+                          try { AuthApi.request(this, "POST", "/v1/logout", new JSONObject(), true); }
+                          catch (Exception ignored) { }
+                          AuthApi.clear(this);
+                          runOnUiThread(this::showLogin);
+                      }, "AutoClick-Logout").start();
+                  });
+                  refreshStatus();
+              }
+          
+          '''
+          src = src[:start] + new_dashboard + src[end:]
+          start = src.index('    private void startMode(')
+          end = src.index('    @Override protected void onResume()', start)
+          src = src[:start] + '''    private void openTikTokInside() {
+                  if (!unlocked) return;
+                  if (status != null) status.setText("Đang kiểm tra thời hạn tài khoản...");
+                  new Thread(() -> {
+                      try {
+                          JSONObject me = AuthApi.request(this, "GET", "/v1/me", null, true);
+                          if (me.optBoolean("emergency_stop"))
+                              throw new IllegalStateException("ADMIN đang dừng tính năng");
+                          runOnUiThread(() -> {
+                              if (unlocked) startActivity(new Intent(this, TikTokActivity.class));
+                          });
+                      } catch (Exception err) {
+                          runOnUiThread(() -> {
+                              if (status != null) status.setText("Không thể mở: " + err.getMessage());
+                          });
+                      }
+                  }, "AutoClick-License").start();
+              }
+          
+          ''' + src[end:]
+          # Authentication method itself unchanged (aside from the one success navigation line).
+          new_login = src[src.index(login_open):src.index(login_close)]
+          assert new_login.replace(
+              'runOnUiThread(() -> {unlocked=true; showDashboard(); openTikTokInside();});',
+              original_success
+          ) == old_login, 'Login functionality unexpectedly changed'
+          assert 'LiveHuntV34' not in src
+          MAIN.write_text(src, encoding='utf-8')
+          
+          manifest = MANIFEST.read_text(encoding='utf-8')
+          needle = '<activity android:name=".AdminActivity"'
+          assert manifest.count(needle) == 1
+          manifest = manifest.replace(needle,
+              '<activity android:name=".TikTokActivity" android:exported="false" />\n'
+              '        ' + needle, 1)
+          manifest = manifest.replace('android:label="TikXu v3.6.1 • Trợ năng LIVE"',
+                                      'android:label="Điểu Tuấn Auto Click"')
+          MANIFEST.write_text(manifest, encoding='utf-8')
+          ET.parse(MANIFEST)
+          
+          # Remove all coin/chest detection engine; do not touch authentication backend.
+          for name in ('LiveHuntV34.java', 'VisionReader.java'):
+              (PKG / name).unlink(missing_ok=True)
+          for png in (ROOT / 'app/src/main/assets').glob('chest_sample_*'):
+              png.unlink()
+          
+          gradle = GRADLE.read_text(encoding='utf-8')
+          assert "versionCode 14" in gradle and "versionName '0.3.6.4-scheduled-rooms'" in gradle
+          gradle = gradle.replace('versionCode 14', 'versionCode 15')
+          gradle = gradle.replace("versionName '0.3.6.4-scheduled-rooms'", "versionName '0.3.6.5-autoclick'")
+          gradle = gradle.replace("    implementation 'com.google.mlkit:text-recognition:16.0.1'", '')
+          GRADLE.write_text(gradle, encoding='utf-8')
+          strings = STRINGS.read_text(encoding='utf-8')
+          STRINGS.write_text(strings.replace('TikXu', 'Auto Click'), encoding='utf-8')
+          
+          (PKG / 'TapAccessibilityService.java').write_text(r'''package com.example.tikxu;
+          
+          import android.accessibilityservice.AccessibilityService;
+          import android.accessibilityservice.GestureDescription;
+          import android.graphics.Path;
+          import android.os.Build;
+          import android.os.Handler;
+          import android.os.Looper;
+          import android.view.accessibility.AccessibilityEvent;
+          import android.view.accessibility.AccessibilityNodeInfo;
+          
+          /** Tap only when OUR app is in foreground. No external-app scraping. */
+          public final class TapAccessibilityService extends AccessibilityService {
+              private static volatile TapAccessibilityService instance;
+              private final Handler handler = new Handler(Looper.getMainLooper());
+              private boolean active;
+              private int x, y, intervalMs;
+              private final Runnable task = this::tap;
+              @Override protected void onServiceConnected() { super.onServiceConnected(); instance = this; }
+              @Override public void onAccessibilityEvent(AccessibilityEvent event) { }
+              @Override public void onInterrupt() { stopLocal(); }
+              @Override public void onDestroy() {
+                  stopLocal();
+                  if (instance == this) instance = null;
+                  super.onDestroy();
+              }
+              public static boolean isReady() { return instance != null; }
+              public static boolean startTap(int px, int py, int interval) {
+                  TapAccessibilityService s = instance;
+                  if (s == null || Build.VERSION.SDK_INT < 26 || interval < 80) return false;
+                  s.stopLocal();
+                  s.x = px; s.y = py; s.intervalMs = interval;
+                  s.active = true;
+                  s.handler.post(s.task);
+                  return true;
+              }
+              public static void stop() {
+                  TapAccessibilityService s = instance;
+                  if (s != null) s.stopLocal();
+              }
+              private void stopLocal() { active = false; handler.removeCallbacks(task); }
+              private void tap() {
+                  if (!active) return;
+                  AccessibilityNodeInfo root = getRootInActiveWindow();
+                  if (root == null || root.getPackageName() == null ||
+                          !getPackageName().contentEquals(root.getPackageName())) {
+                      stopLocal();
+                      return;
+                  }
+                  Path path = new Path();
+                  path.moveTo(x, y);
+                  GestureDescription gesture = new GestureDescription.Builder()
+                      .addStroke(new GestureDescription.StrokeDescription(path, 0, 40)).build();
+                  boolean dispatched = dispatchGesture(gesture, new GestureResultCallback() {
+                      @Override public void onCompleted(GestureDescription g) { scheduleNext(); }
+                      @Override public void onCancelled(GestureDescription g) { scheduleNext(); }
+                  }, handler);
+                  if (!dispatched) scheduleNext();
+              }
+              private void scheduleNext() {
+                  if (active) {
+                      handler.removeCallbacks(task);
+                      handler.postDelayed(task, intervalMs);
+                  }
+              }
+          }
+          ''', encoding='utf-8')
+          
+          (PKG / 'TikTokActivity.java').write_text(r'''package com.example.tikxu;
+          
+          import android.app.Activity;
+          import android.app.AlertDialog;
+          import android.content.ClipData;
+          import android.content.ClipboardManager;
+          import android.content.Intent;
+          import android.content.res.ColorStateList;
+          import android.graphics.Color;
+          import android.net.Uri;
+          import android.os.Bundle;
+          import android.provider.Settings;
+          import android.view.Gravity;
+          import android.view.MotionEvent;
+          import android.view.View;
+          import android.view.ViewGroup;
+          import android.webkit.WebChromeClient;
+          import android.webkit.WebResourceRequest;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import android.widget.Button;
+          import android.widget.EditText;
+          import android.widget.FrameLayout;
+          import android.widget.LinearLayout;
+          import android.widget.TextView;
+          import java.util.Locale;
+          
+          /** TikTok WebView + manually started Auto Click; existing backend login stays separate. */
+          public final class TikTokActivity extends Activity {
+              private FrameLayout screen;
+              private WebView web;
+              private FrameLayout.LayoutParams bubbleParams;
+              private View panel;
+              private Button bubble, play, pace;
+              private TextView hint;
+              private int intervalMs = 150, tapX = -1, tapY = -1;
+              private boolean tapping = false;
+              private float downX, downY;
+              private int dragLeft, dragTop;
+          
+              private int dp(float val) { return Math.round(val * getResources().getDisplayMetrics().density); }
+          
+              @Override public void onCreate(Bundle state) {
+                  super.onCreate(state);
+                  // Backend is already checked by MainActivity before launch.
+                  if (AuthApi.token(this).length() < 20) { finish(); return; }
+                  screen = new FrameLayout(this);
+                  setContentView(screen);
+                  web = new WebView(this);
+                  WebSettings settings = web.getSettings();
+                  settings.setJavaScriptEnabled(true);        // Required by the TikTok website.
+                  settings.setDomStorageEnabled(true);
+                  settings.setAllowFileAccess(false);
+                  settings.setAllowContentAccess(false);
+                  settings.setMediaPlaybackRequiresUserGesture(true);
+                  settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+                  web.setWebChromeClient(new WebChromeClient());
+                  web.setWebViewClient(new WebViewClient() {
+                      @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
+                          Uri uri = req.getUrl();
+                          if ("https".equalsIgnoreCase(uri.getScheme()) && onTikTokDomain(uri.getHost())) return false;
+                          // External sign-in providers must open in a separate browser.
+                          if ("https".equalsIgnoreCase(uri.getScheme())) {
+                              try { startActivity(new Intent(Intent.ACTION_VIEW, uri)); }
+                              catch (Exception ignored) { }
+                          }
+                          return true;
+                      }
+                  });
+                  screen.addView(web, new FrameLayout.LayoutParams(-1, -1));
+                  screen.post(() -> {
+                      tapX = screen.getWidth() / 2 + dp(24);
+                      int[] position = new int[2]; screen.getLocationOnScreen(position);
+                      tapY = position[1] + screen.getHeight() / 2;
+                  });
+                  addFloatingBubble();
+                  web.loadUrl("https://www.tiktok.com/");
+              }
+          
+              private boolean onTikTokDomain(String host) {
+                  if (host == null) return false;
+                  String h = host.toLowerCase(Locale.US);
+                  return h.equals("tiktok.com") || h.endsWith(".tiktok.com");
+              }
+          
+              private Button button(LinearLayout container, String title, Runnable action) {
+                  Button btn = new Button(this);
+                  btn.setAllCaps(false);
+                  btn.setText(title);
+                  btn.setTextSize(12);
+                  btn.setTextColor(Color.WHITE);
+                  btn.setBackgroundTintList(ColorStateList.valueOf(0xff244676));
+                  LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(-1, dp(45));
+                  p.bottomMargin = dp(4);
+                  container.addView(btn, p);
+                  btn.setOnClickListener(v -> action.run());
+                  return btn;
+              }
+          
+              private void addFloatingBubble() {
+                  bubble = new Button(this);
+                  bubble.setText("DT");
+                  bubble.setAllCaps(false);
+                  bubble.setTextColor(Color.WHITE);
+                  bubble.setTextSize(12);
+                  bubble.setPadding(0, 0, 0, 0);
+                  bubble.setBackgroundTintList(ColorStateList.valueOf(0xff1673ca));
+                  bubbleParams = new FrameLayout.LayoutParams(dp(52), dp(52), Gravity.TOP | Gravity.START);
+                  bubbleParams.leftMargin = dp(2);
+                  bubbleParams.topMargin = dp(108);
+                  screen.addView(bubble, bubbleParams);
+                  bubble.setOnTouchListener((v, event) -> {
+                      switch(event.getActionMasked()) {
+                          case MotionEvent.ACTION_DOWN:
+                              downX = event.getRawX(); downY = event.getRawY();
+                              dragLeft = bubbleParams.leftMargin; dragTop = bubbleParams.topMargin;
+                              return true;
+                          case MotionEvent.ACTION_MOVE:
+                              int dx = Math.round(event.getRawX() - downX);
+                              int dy = Math.round(event.getRawY() - downY);
+                              bubbleParams.leftMargin = Math.max(0, Math.min(screen.getWidth()-dp(52), dragLeft+dx));
+                              bubbleParams.topMargin = Math.max(0, Math.min(screen.getHeight()-dp(52), dragTop+dy));
+                              bubble.setLayoutParams(bubbleParams);
+                              return true;
+                          case MotionEvent.ACTION_UP:
+                              if (Math.abs(event.getRawX() - downX) < dp(12) &&
+                                      Math.abs(event.getRawY() - downY) < dp(12)) togglePanel();
+                              return true;
+                          default: return true;
+                      }
+                  });
+              }
+          
+              private void togglePanel() {
+                  if (panel != null) { screen.removeView(panel); panel = null; return; }
+                  LinearLayout card = new LinearLayout(this);
+                  card.setOrientation(LinearLayout.VERTICAL);
+                  card.setPadding(dp(10), dp(10), dp(10), dp(10));
+                  card.setBackgroundColor(0xf0112035);
+                  FrameLayout.LayoutParams pp = new FrameLayout.LayoutParams(dp(274), -2,
+                          Gravity.TOP | Gravity.START);
+                  pp.leftMargin = dp(5);
+                  pp.topMargin = dp(80);
+                  screen.addView(card, pp);
+                  panel = card;
+                  TextView heading = new TextView(this);
+                  heading.setText("ĐIỂU TUẤN • v3.6.5");
+                  heading.setTextColor(Color.WHITE);
+                  heading.setTextSize(15);
+                  card.addView(heading);
+                  hint = new TextView(this);
+                  hint.setTextColor(0xffc5daec);
+                  hint.setTextSize(11);
+                  hint.setText("Tap tay: chạm chọn điểm rồi bấm chạy. Cần bật Trợ năng.");
+                  card.addView(hint);
+                  play = button(card, tapping ? "DỪNG TAP TAY" : "CHẠY TAP TAY", this::toggleTap);
+                  pace = button(card, "TỐC ĐỘ " + intervalMs + "ms", this::nextSpeed);
+                  button(card, "CHỌN ĐIỂM BẤM", this::choosePoint);
+                  button(card, "TIKTOK LIVE", () -> loadTikTok("https://www.tiktok.com/live"));
+                  button(card, "TIN NHẮN RIÊNG", () -> loadTikTok("https://www.tiktok.com/messages"));
+                  button(card, "CHAT AI • DEMO", this::showChatDemo);
+                  button(card, "TRỞ VỀ QUẢN LÝ / ADMIN", () -> { stopTap(); finish(); });
+                  button(card, "THU GỌN", this::togglePanel);
+                  // Keep the bubble above the expanded menu.
+                  bubble.bringToFront();
+              }
+          
+              private void loadTikTok(String url) {
+                  stopTap();
+                  web.loadUrl(url);
+                  if (panel != null) togglePanel();
+              }
+              private void toggleTap() {
+                  if (tapping) { stopTap(); return; }
+                  if (!TapAccessibilityService.isReady()) {
+                      if (hint != null) hint.setText("Chưa bật Trợ năng. Đang mở Cài đặt...");
+                      startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                      return;
+                  }
+                  if (tapX < 0 || tapY < 0) {
+                      if (hint != null) hint.setText("Chọn điểm bấm trước.");
+                      return;
+                  }
+                  if (TapAccessibilityService.startTap(tapX, tapY, intervalMs)) {
+                      tapping = true;
+                      if (play != null) play.setText("DỪNG TAP TAY");
+                      if (hint != null) hint.setText("Đang bấm tại " + tapX + ", " + tapY + " • " + intervalMs + "ms");
+                  } else if (hint != null) hint.setText("Không khởi động được Tap tay.");
+              }
+              private void stopTap() {
+                  TapAccessibilityService.stop();
+                  tapping = false;
+                  if (play != null) play.setText("CHẠY TAP TAY");
+              }
+              private void nextSpeed() {
+                  int[] speeds = {80, 120, 150, 250, 500, 1000};
+                  int index = 0;
+                  for (int i = 0; i < speeds.length; i++) if (speeds[i] == intervalMs) index = i;
+                  intervalMs = speeds[(index + 1) % speeds.length];
+                  if (pace != null) pace.setText("TỐC ĐỘ " + intervalMs + "ms");
+                  if (tapping) { stopTap(); toggleTap(); }
+              }
+              private void choosePoint() {
+                  stopTap();
+                  if (panel != null) togglePanel();
+                  View pick = new View(this);
+                  pick.setBackgroundColor(0x3d1f9fff);
+                  screen.addView(pick, new FrameLayout.LayoutParams(-1, -1));
+                  // While choosing, the bubble is hidden to avoid an accidental tap.
+                  bubble.setVisibility(View.GONE);
+                  pick.setOnTouchListener((view, event) -> {
+                      if (event.getActionMasked() == MotionEvent.ACTION_UP) {
+                          tapX = (int) event.getRawX();
+                          tapY = (int) event.getRawY();
+                          screen.removeView(pick);
+                          bubble.setVisibility(View.VISIBLE);
+                          togglePanel();
+                          if (hint != null) hint.setText("Đã chọn điểm " + tapX + ", " + tapY);
+                      }
+                      return true;
+                  });
+              }
+          
+              // TikTok does not grant every account the permissions required for bot replies.
+              // No message collection, automation, or AI API keys hidden in this build.
+              private void showChatDemo() {
+                  final EditText input = new EditText(this);
+                  input.setHint("Dán tin nhắn LIVE hoặc tin nhắn riêng vào đây");
+                  new AlertDialog.Builder(this)
+                      .setTitle("CHAT AI • BẢN THỬ")
+                      .setMessage("Chưa tự đọc/gửi tin nhắn TikTok. Bản này chỉ tạo câu gợi ý mẫu để bạn tự gửi.")
+                      .setView(input)
+                      .setNeutralButton("Đóng", null)
+                      .setPositiveButton("Gợi ý", (dialog, which) -> {
+                          String text = input.getText().toString().trim();
+                          String response = text.endsWith("?")
+                                  ? "Haha câu này hay nè 😄 Để mình xem nhé!"
+                                  : "Haha cảm ơn bạn đã nhắn, chúc bạn vui vẻ 😄";
+                          new AlertDialog.Builder(this).setTitle("Gợi ý trả lời (mẫu)")
+                              .setMessage(response)
+                              .setNegativeButton("Đóng", null)
+                              .setPositiveButton("Sao chép", (d, w) -> {
+                                  ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                                  if (clipboard != null) clipboard.setPrimaryClip(ClipData.newPlainText("Trả lời", response));
+                              }).show();
+                      }).show();
+              }
+              @Override protected void onStop() { stopTap(); super.onStop(); }
+              @Override protected void onDestroy() {
+                  stopTap();
+                  if (web != null) { screen.removeView(web); web.destroy(); web = null; }
+                  super.onDestroy();
+              }
+              @Override public void onBackPressed() {
+                  if (panel != null) togglePanel();
+                  else if (web != null && web.canGoBack()) web.goBack();
+                  else super.onBackPressed();
+              }
+          }
+          ''', encoding='utf-8')
+          
+          for p in PKG.glob('*.java'):
+              assert 'LiveHuntV34' not in p.read_text(encoding='utf-8'), 'Old chest engine reference in ' + str(p)
+          for p, digest in checksums.items():
+              assert hashlib.sha256(p.read_bytes()).hexdigest() == digest, p.name + ' was modified!'
+          assert 'versionName \'0.3.6.5-autoclick\'' in GRADLE.read_text(encoding='utf-8')
+          print('DONE v3.6.5: AuthApi, login and AdminActivity retained; auto click + TikTok WebView added.')
+          PY
+          python3 /tmp/patch_v365.py
+      - name: Confirm retained login, ADMIN, and removed chest engine
+        run: |
+          set -euo pipefail
+          grep -Fq 'AuthApi.saveLogin(this,result)' TikXuAssist/app/src/main/java/com/example/tikxu/MainActivity.java
+          grep -Fq '/v1/login' TikXuAssist/app/src/main/java/com/example/tikxu/MainActivity.java
+          grep -Fq 'class AuthApi' TikXuAssist/app/src/main/java/com/example/tikxu/AuthApi.java
+          test -f TikXuAssist/app/src/main/java/com/example/tikxu/AdminActivity.java
+          test ! -f TikXuAssist/app/src/main/java/com/example/tikxu/LiveHuntV34.java
+          test -f TikXuAssist/app/src/main/java/com/example/tikxu/TikTokActivity.java
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
+      - name: Install Android SDK 35
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0"
+      - name: Set up Gradle 8.9
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build v3.6.5 APK
+        working-directory: TikXuAssist
+        run: gradle --no-daemon :app:assembleDebug
+      - name: Upload v3.6.5 APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DIEU-TUAN-AUTOCLICK-v3.6.5-APK
+          path: TikXuAssist/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
