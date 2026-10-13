@@ -1,4 +1,5 @@
-name: Build DIEU TUAN TikXu v3.1 APK
+
+name: Build DIEU TUAN TikXu v3.2 APK
 
 on:
   workflow_dispatch:
@@ -13,9 +14,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Extract source
+      - name: Extract source v3.2
         run: |
-          unzip -q Dieu_Tuan_TikXu_v3_1_Source.zip
+          test -f Dieu_Tuan_TikXu_v3_2_Source.zip
+          unzip -q Dieu_Tuan_TikXu_v3_2_Source.zip
           test -f TikXuAssist/app/build.gradle
 
       - name: Setup Java
@@ -38,13 +40,13 @@ jobs:
         with:
           gradle-version: '8.9'
 
-      - name: Build APK
+      - name: Build APK v3.2
         working-directory: TikXuAssist
         run: gradle --no-daemon :app:assembleDebug
 
-      - name: Upload APK
+      - name: Upload APK v3.2
         uses: actions/upload-artifact@v4
         with:
-          name: DIEU-TUAN-TikXu-v3.1-APK
+          name: DIEU-TUAN-TikXu-v3.2-APK
           path: TikXuAssist/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
